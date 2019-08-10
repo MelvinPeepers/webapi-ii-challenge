@@ -5,6 +5,7 @@ const BlogPostRouter = require("./data/posts-router.js");
 
 const server = express();
 
+// middleware
 server.use(express.json());
 server.use("/api/posts", BlogPostRouter);
 
