@@ -1,7 +1,7 @@
 const express = require("express");
 
-// I'll be setting up a posts folder and posts-router.js file
-const BlogPostRouter = require("./posts/posts-router.js");
+// db is in data so I'll need to create posts-router.js in there instead
+const BlogPostRouter = require("./data/posts-router.js");
 
 const server = express();
 
