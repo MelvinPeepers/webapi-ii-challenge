@@ -44,6 +44,7 @@ router.get("/:id", async (req, res) => {
     });
   }
 });
+// tested the above with POSTMAN
 
 // GET /api/posts/:id/comments - Returns an array of all the comment objects associated with the post with the specified id.
 router.get("/:id/comments", async (req, res) => {
@@ -51,7 +52,7 @@ router.get("/:id/comments", async (req, res) => {
     const { id } = req.params;
     const comment = await Posts.findCommentById(id);
 
-    if (comment) {
+    if (comment && comment.length) {
       res.status(200).json(comment);
     } else {
       res
@@ -62,14 +63,39 @@ router.get("/:id/comments", async (req, res) => {
     // log error to database
     console.log(error);
     res.status(500).json({
-      message: "The post with the specified ID does not exist."
+      error: "The comments information could not be retrieved."
     });
   }
 });
+// tested the above with POSTMAN
 
-// DELETE /api/posts/:id
+// POST /api/posts - Creates a post using the information sent inside the request body.
+router.post("/", async (req, res) => {
+  try {
+    const { title, contents } = req.body;
+    if (!title || !contents) {
+      res.status(400).json({
+        errorMessage: "Please provide title and contents for the post."
+      });
+    } else {
+      const post = await Posts.insert(req.body);
+      return res.status(201).json(post);
+    }
+  } catch (error) {
+    // log error to database
+    console.log(error);
+    res.status(500).json({
+      error: "There was an error while saving the post to the database"
+    });
+  }
+});
+// tested the above with POSTMAN
 
-// PUT /api/posts/:id
+// POST /api/posts/:id/comments - Creates a comment for the post with the specified id using information sent inside of the request body.
+
+// DELETE /api/posts/:id - Removes the post with the specified id and returns the deleted post object. You may need to make additional calls to the database in order to satisfy this requirement.
+
+// PUT /api/posts/:id - Updates the post with the specified id using data from the request body. Returns the modified document, NOT the original.
 
 // export
 module.exports = router;
