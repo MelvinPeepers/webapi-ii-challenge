@@ -92,6 +92,27 @@ router.post("/", async (req, res) => {
 // tested the above with POSTMAN
 
 // POST /api/posts/:id/comments - Creates a comment for the post with the specified id using information sent inside of the request body.
+router.post("/:id/comments", async (req, res) => {
+  const newComment = req.body;
+
+  Posts.insertComment(newComment)
+    .then(comment => {
+      if (newComment.post_id && newComment.text) {
+        res.status(201).json(comment);
+      } else {
+        res.status(400).json({
+          errorMessage: "Please provide text for the comment."
+        });
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({
+        error: "There was an error while saving the comment to the database"
+      });
+    });
+});
+// tested the above with POSTMAN
 
 // DELETE /api/posts/:id - Removes the post with the specified id and returns the deleted post object. You may need to make additional calls to the database in order to satisfy this requirement.
 router.delete("/:id", async (req, res) => {
@@ -122,7 +143,7 @@ router.put("/:id", async (req, res) => {
   const changes = req.body;
   const { title, contents } = req.body;
 
-  db.update(id, changes)
+  Posts.update(id, changes)
     .then(updated => {
       if (!updated) {
         res.status(404).json({
@@ -142,5 +163,7 @@ router.put("/:id", async (req, res) => {
       });
     });
 });
+// tested the above with POSTMAN
+
 // export
 module.exports = router;
