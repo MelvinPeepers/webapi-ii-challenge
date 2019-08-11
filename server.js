@@ -1,14 +1,15 @@
 // Grabbing the main Express Module
 const express = require("express");
 
-// db is in data so I'll need to create posts-router.js in there instead
+// db is in data so I'll need to create posts-router.js in there instead / Pull in our router
 const BlogPostRouter = require("./data/posts-router.js");
 
 // global objects
 const server = express();
 
-// middleware
+// middleware - converts the data to JSON
 server.use(express.json());
+
 server.use("/api/posts", BlogPostRouter);
 
 // root

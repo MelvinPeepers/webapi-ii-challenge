@@ -94,8 +94,53 @@ router.post("/", async (req, res) => {
 // POST /api/posts/:id/comments - Creates a comment for the post with the specified id using information sent inside of the request body.
 
 // DELETE /api/posts/:id - Removes the post with the specified id and returns the deleted post object. You may need to make additional calls to the database in order to satisfy this requirement.
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  Posts.remove(id)
+    .then(deletePost => {
+      if (deletePost) {
+        res.json(deletePost);
+      } else {
+        res.status(404).json({
+          message: "The post with the specified ID does not exist."
+        });
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({
+        error: "The post could not be removed"
+      });
+    });
+});
+// tested the above with POSTMAN
 
 // PUT /api/posts/:id - Updates the post with the specified id using data from the request body. Returns the modified document, NOT the original.
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+  const { title, contents } = req.body;
 
+  db.update(id, changes)
+    .then(updated => {
+      if (!updated) {
+        res.status(404).json({
+          message: "The post with the specified ID does not exist."
+        });
+      } else if (!title || !contents) {
+        res.status(400).json({
+          errorMessage: "Please provide title and contents for the post."
+        });
+      } else {
+        res.status(200).json(updated);
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        error: "The post information could not be modified."
+      });
+    });
+});
 // export
 module.exports = router;
